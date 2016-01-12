@@ -1,17 +1,18 @@
 #include <CoreFoundation/CoreFoundation.h>
+
 #include <objc/objc.h>
 #include <objc/objc-runtime.h>
+
 #include <iostream>
 
 extern "C" int NSRunAlertPanel(CFStringRef strTitle, CFStringRef strMsg,
                                CFStringRef strButton1, CFStringRef strButton2,
                                CFStringRef strButton3, ...);
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
   id app = nullptr;
 
-  id pool = objc_getClass("NSAutoreleasePool");
+  id pool = reinterpret_cast<id>(objc_getClass("NSAutoreleasePool"));
 
   if (!pool) {
     std::cerr << "Unable to get NSAutoreleasePool!\nAborting\n";
@@ -27,7 +28,7 @@ int main(int argc, char **argv)
 
   pool = objc_msgSend(pool, sel_registerName("init"));
 
-  app = objc_msgSend(objc_getClass("NSApplication"),
+  app = objc_msgSend(reinterpret_cast<id>(objc_getClass("NSApplication")),
                      sel_registerName("sharedApplication"));
 
   NSRunAlertPanel(CFSTR("Testing"),
